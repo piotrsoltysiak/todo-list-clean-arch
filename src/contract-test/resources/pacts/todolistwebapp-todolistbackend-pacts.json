@@ -1,0 +1,113 @@
+{
+  "consumer": {
+    "name": "TodoListWebApp"
+  },
+  "provider": {
+    "name": "TodoListBackend"
+  },
+  "interactions": [
+    {
+      "description": "A request to create todo list",
+      "providerState": "Allowing to create todo list",
+      "request": {
+        "method": "POST",
+        "path": "/todo-lists",
+        "headers": {},
+        "body": {
+          "name": "Test todo list"
+        },
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "location": "/todo-lists/test-todo-list-id"
+        }
+      }
+    },
+    {
+      "description": "A request to create todo item",
+      "providerState": "Allowing to create todo item for given list id",
+      "request": {
+        "method": "POST",
+        "path": "/todo-lists/test-todo-list-id/items",
+        "headers": {},
+        "body": {
+          "description": "Test todo item"
+        },
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+          "location": "/todo-lists/test-todo-list-id/items/test-todo-item-id"
+        }
+      }
+    },
+    {
+      "description": "A request to complete the todo item",
+      "providerState": "Todo list with todo item which can be completed",
+      "request": {
+        "method": "PUT",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/complete",
+        "headers": {},
+        "body": {},
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 200,
+        "headers": {}
+      }
+    },
+    {
+      "description": "A request to complete the todo item",
+      "providerState": "Allowing to revert completion of todo item for given id and list id",
+      "request": {
+        "method": "PUT",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/revert-completion",
+        "headers": {},
+        "body": {},
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 200,
+        "headers": {}
+      }
+    },
+    {
+      "description": "A request to remove todo item",
+      "providerState": "Allowing to remove todo item for given id and list id",
+      "request": {
+        "method": "DELETE",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id",
+        "headers": {},
+        "body": {},
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 204,
+        "headers": {}
+      }
+    },
+    {
+      "description": "A request to remove todo list",
+      "providerState": "Allowing to remove todo list for given id",
+      "request": {
+        "method": "DELETE",
+        "path": "/todo-lists/test-todo-list-id",
+        "headers": {},
+        "body": {},
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 204,
+        "headers": {}
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
