@@ -10,4 +10,5 @@ Feature: Complete Todo
   Scenario: Todo not found
     Given I created todo list "Clean arch tech talk"
     And I created todo item "prepare the presentation" on list "Clean arch tech talk"
-    When I am unable to complete the item "complete the presentation" from list "Clean arch tech talk" with not found error
+    When I complete the item "complete the presentation" from list "Clean arch tech talk"
+    Then Todo item not found error occurs
