@@ -6,9 +6,11 @@ import com.todoclean.domain.todolist.TodoListId;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.Builder;
 import lombok.Value;
 
 @Value
+@Builder
 public class TodoListDto {
 
     TodoListId todoListId;

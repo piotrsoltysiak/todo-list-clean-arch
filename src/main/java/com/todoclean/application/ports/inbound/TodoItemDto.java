@@ -4,9 +4,11 @@ import com.todoclean.domain.todolist.TodoItem;
 import com.todoclean.domain.todolist.TodoItemId;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public final class TodoItemDto {

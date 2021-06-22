@@ -7,6 +7,7 @@ import com.todoclean.application.ports.inbound.CreateTodoListCommand;
 import com.todoclean.application.ports.inbound.RemoveTodoItemCommand;
 import com.todoclean.application.ports.inbound.RemoveTodoListCommand;
 import com.todoclean.application.ports.inbound.RevertTodoCompletionCommand;
+import com.todoclean.application.ports.inbound.TodoListDto;
 import com.todoclean.domain.todolist.TodoItemId;
 import com.todoclean.domain.todolist.TodoListId;
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -121,6 +123,13 @@ class TodoListController {
         );
 
         todoListFacade.handle(command);
+    }
+
+    @GetMapping("/{list-id}")
+    @ResponseStatus(HttpStatus.OK)
+    TodoListDto getTodoList(@PathVariable(value = "list-id") @NonNull String listId) {
+        TodoListId todoListId = new TodoListId(listId);
+        return todoListFacade.findBy(todoListId);
     }
 
 }

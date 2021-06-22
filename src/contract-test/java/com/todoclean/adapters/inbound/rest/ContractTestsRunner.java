@@ -14,11 +14,14 @@ import com.todoclean.application.ports.inbound.CreateTodoListCommand;
 import com.todoclean.application.ports.inbound.RemoveTodoItemCommand;
 import com.todoclean.application.ports.inbound.RemoveTodoListCommand;
 import com.todoclean.application.ports.inbound.RevertTodoCompletionCommand;
+import com.todoclean.application.ports.inbound.TodoItemDto;
+import com.todoclean.application.ports.inbound.TodoListDto;
 import com.todoclean.domain.todolist.TodoItemId;
 import com.todoclean.domain.todolist.TodoListId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +121,22 @@ class ContractTestsRunner {
         RevertTodoCompletionCommand command = new RevertTodoCompletionCommand(TODO_LIST_ID, TODO_ITEM_ID);
 
         verify(todoListFacade).handle(command);
+    }
+
+    @State(value = "Allowing to get todo list for given id")
+    void successfulGetTodoListByIdVerification() {
+        TodoItemDto completedItem = TodoItemDto.builder()
+                .id(TODO_ITEM_ID)
+                .whatNeedsToBeDone("Clean architecture presentation")
+                .build();
+
+        when(todoListFacade.findBy(TODO_LIST_ID)).thenReturn(
+                TodoListDto.builder()
+                        .todoListId(TODO_LIST_ID)
+                        .title("Test todo list")
+                        .completedItems(Collections.singletonList(completedItem))
+                        .build()
+        );
     }
 
 }

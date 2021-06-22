@@ -103,6 +103,21 @@
         "status": 204,
         "headers": {}
       }
+    },
+    {
+      "description": "A request to get todo list",
+      "providerState": "Allowing to get todo list for given id",
+      "request": {
+        "method": "GET",
+        "path": "/todo-lists/test-todo-list-id",
+        "headers": {},
+        "body": {},
+        "matchingRules": {}
+      },
+      "response": {
+        "status": 200,
+        "headers": {}
+      }
     }
   ],
   "metadata": {
