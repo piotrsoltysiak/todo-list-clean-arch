@@ -9,11 +9,11 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class TodoItem {
 
-    private TodoItemId id;
+    private final TodoItemId id;
 
-    private String description;
+    private final String description;
 
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
 
     private LocalDateTime completedAt;
 
@@ -23,18 +23,18 @@ public class TodoItem {
         this.createdAt = createdAt;
     }
 
-    public boolean hasId(TodoItemId todoItemId) {
+    boolean hasId(TodoItemId todoItemId) {
         return id.equals(todoItemId);
     }
 
-    public void complete(LocalDateTime completedAt) {
+    void complete(LocalDateTime completedAt) {
         if (isCompleted()) {
             return;
         }
         this.completedAt = completedAt;
     }
 
-    public boolean isCompleted() {
+    boolean isCompleted() {
         return completedAt != null;
     }
 
@@ -46,7 +46,7 @@ public class TodoItem {
         this.completedAt = null;
     }
 
-    public boolean hasBenCompletedAfter(LocalDateTime time) {
+    boolean hasBenCompletedAfter(LocalDateTime time) {
         return completedAt.isAfter(time);
     }
 }

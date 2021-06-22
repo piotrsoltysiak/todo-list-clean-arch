@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 class CreateTodoRequest {
+
     private String description;
 }

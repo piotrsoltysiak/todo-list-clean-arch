@@ -1,6 +1,6 @@
 Feature: Remove todo item
 
-  Scenario:
+  Scenario: Happy path
     Given I created todo list "Clean arch tech talk"
     And I created todo item "prepare the presentation" on list "Clean arch tech talk"
     When I removed todo item "prepare the presentation" from list "Clean arch tech talk"

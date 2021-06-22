@@ -1,7 +1,5 @@
-package com.piotrsoltysiak.todoclean.domain;
+package com.piotrsoltysiak.todoclean.domain.todolist;
 
-import com.piotrsoltysiak.todoclean.domain.todolist.TodoItem;
-import com.piotrsoltysiak.todoclean.domain.todolist.TodoItemId;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 

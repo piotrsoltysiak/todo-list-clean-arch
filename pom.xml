@@ -19,6 +19,7 @@
         <cucumber.version>6.10.4</cucumber.version>
         <pact.version>4.1.11</pact.version>
         <testcontainers.version>1.15.3</testcontainers.version>
+        <archunit.version>0.19.0</archunit.version>
     </properties>
     <dependencies>
         <dependency>
@@ -44,11 +45,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.security</groupId>-->
-<!--            <artifactId>spring-security-test</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -105,6 +101,12 @@
             <groupId>au.com.dius.pact.provider</groupId>
             <artifactId>junit5spring</artifactId>
             <version>${pact.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -223,6 +225,32 @@
                             <resources>
                                 <resource>
                                     <directory>src/use-case-test/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-architecture-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/architecture-test/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-architecture-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/architecture-test/resources</directory>
                                 </resource>
                             </resources>
                         </configuration>

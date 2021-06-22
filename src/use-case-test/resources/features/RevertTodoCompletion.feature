@@ -1,6 +1,6 @@
 Feature: Revert Todo completion
 
-  Scenario:
+  Scenario: Happy path
     Given I created todo list "Clean arch tech talk"
     And I created todo item "prepare the presentation" on list "Clean arch tech talk"
     And I complete the item "prepare the presentation" from list "Clean arch tech talk"

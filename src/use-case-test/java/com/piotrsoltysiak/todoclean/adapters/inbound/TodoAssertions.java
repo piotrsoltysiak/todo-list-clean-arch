@@ -1,8 +1,10 @@
 package com.piotrsoltysiak.todoclean.adapters.inbound;
 
 import com.piotrsoltysiak.todoclean.application.TestTodoListFacade;
+import com.piotrsoltysiak.todoclean.application.ports.inbound.CompleteTodoCommand;
 import com.piotrsoltysiak.todoclean.application.ports.outbound.TodoListNotFoundException;
 import com.piotrsoltysiak.todoclean.domain.todolist.TodoItemId;
+import com.piotrsoltysiak.todoclean.domain.todolist.TodoItemNotFoundException;
 import com.piotrsoltysiak.todoclean.domain.todolist.TodoListId;
 import io.cucumber.java8.En;
 import java.security.NoSuchAlgorithmException;
@@ -53,6 +55,7 @@ public class TodoAssertions implements En {
 
             assertThat(isCompletedListEmpty);
         });
+
         Then("The item {string} is on the pending section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
@@ -82,6 +85,23 @@ public class TodoAssertions implements En {
             assertThat(throwable)
                     .isInstanceOf(TodoListNotFoundException.class)
                     .hasMessageContaining(todoListIdRaw);
+        });
+
+        When("I am unable to complete the item {string} from list {string} with not found error", (String todoDescription, String todoListTitle) -> {
+            String todoItemIdRaw = toId(todoDescription);
+            String todoListIdRaw = toId(todoListTitle);
+            TodoListId todoListId = new TodoListId(todoListIdRaw);
+            TodoItemId todoItemId = new TodoItemId(todoItemIdRaw);
+
+            CompleteTodoCommand command = new CompleteTodoCommand(todoListId, todoItemId);
+
+            Throwable throwable = catchThrowable(() -> todoListFacade.handle(command));
+
+            assertThat(throwable)
+                    .isInstanceOf(TodoItemNotFoundException.class)
+                    .hasMessageContaining(todoItemIdRaw)
+                    .hasMessageContaining(todoListIdRaw)
+                    .hasMessageContaining("not found");
         });
     }
 

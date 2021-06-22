@@ -1,8 +1,10 @@
 package com.piotrsoltysiak.todoclean.domain.todolist;
 
-import lombok.Value;
+import com.piotrsoltysiak.todoclean.domain.Id;
 
-@Value
-public class TodoListId {
-    String raw;
+public class TodoListId  extends Id {
+
+    public TodoListId(String raw) {
+        super(raw);
+    }
 }
