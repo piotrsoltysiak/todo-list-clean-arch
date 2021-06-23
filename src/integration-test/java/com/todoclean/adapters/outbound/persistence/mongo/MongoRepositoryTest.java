@@ -22,10 +22,10 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = { TodoSpringApplication.class, MongoConfig.class })
 public abstract class MongoRepositoryTest {
 
-    private static final BsonDocument ALL_DOCUMENTS = new BsonDocument();
-
     @Rule
     protected static final MongoDBContainer MONGO = SharedTestMongoContainer.getInstance();
+
+    private static final BsonDocument ALL_DOCUMENTS = new BsonDocument();
 
     @Autowired
     protected MongoTemplate mongoTemplate;

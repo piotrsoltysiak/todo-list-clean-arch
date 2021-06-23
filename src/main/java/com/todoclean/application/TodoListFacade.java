@@ -14,8 +14,10 @@ import com.todoclean.domain.todolist.TodoListId;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TodoListFacade  {
+public class TodoListFacade {
+
     private final TodoListRepository todoListRepository;
+
     private final CurrentTimeSupplier currentTimeSupplier;
 
     public void handle(CompleteTodoCommand command) {

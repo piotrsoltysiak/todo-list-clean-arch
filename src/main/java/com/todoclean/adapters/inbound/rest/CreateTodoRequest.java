@@ -6,4 +6,6 @@ import lombok.Data;
 class CreateTodoRequest {
 
     private String description;
+
+    private String id;
 }

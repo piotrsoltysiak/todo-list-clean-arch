@@ -13,14 +13,12 @@
         "method": "POST",
         "path": "/todo-lists",
         "body": {
+          "id":"test-todo-list-id",
           "name": "Test todo list"
         }
       },
       "response": {
-        "status": 201,
-        "headers": {
-          "location": "/todo-lists/test-todo-list-id"
-        }
+        "status": 201
       }
     },
     {
@@ -30,14 +28,12 @@
         "method": "POST",
         "path": "/todo-lists/test-todo-list-id/items",
         "body": {
+          "id": "test-todo-item-id",
           "description": "Test todo item"
         }
       },
       "response": {
-        "status": 201,
-        "headers": {
-          "location": "/todo-lists/test-todo-list-id/items/test-todo-item-id"
-        }
+        "status": 201
       }
     },
     {

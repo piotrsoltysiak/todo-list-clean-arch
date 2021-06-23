@@ -7,6 +7,8 @@ import lombok.Value;
 
 @Value
 public class CreateTodoListCommand {
+
     @NonNull TodoListId id;
+
     @NonNull String title;
 }

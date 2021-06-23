@@ -6,4 +6,6 @@ import lombok.Data;
 class CreateTodoListRequest {
 
     private String name;
+
+    private String id;
 }

@@ -8,6 +8,8 @@ import lombok.Value;
 
 @Value
 public class RevertTodoCompletionCommand {
+
     @NonNull TodoListId todoListId;
+
     @NonNull TodoItemId todoItemId;
 }

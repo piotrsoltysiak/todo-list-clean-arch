@@ -3,7 +3,6 @@ package com.todoclean.application.ports.inbound;
 import com.todoclean.domain.todolist.TodoItem;
 import com.todoclean.domain.todolist.TodoItemId;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

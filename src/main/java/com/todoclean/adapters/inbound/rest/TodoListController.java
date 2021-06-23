@@ -10,12 +10,9 @@ import com.todoclean.application.ports.inbound.RevertTodoCompletionCommand;
 import com.todoclean.application.ports.inbound.TodoListDto;
 import com.todoclean.domain.todolist.TodoItemId;
 import com.todoclean.domain.todolist.TodoListId;
-import java.net.URI;
-import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,48 +33,28 @@ class TodoListController {
 
     private final TodoListFacade todoListFacade;
 
-    private final Supplier<TodoListId> todoListIdSupplier;
-
-    private final Supplier<TodoItemId> todoItemIdSupplier;
-
     @PostMapping
-    ResponseEntity<Void> createTodoList(@RequestBody CreateTodoListRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    void createTodoList(@RequestBody CreateTodoListRequest request) {
         CreateTodoListCommand command = new CreateTodoListCommand(
-                todoListIdSupplier.get(),
+                new TodoListId(request.getId()),
                 request.getName()
         );
 
-        URI location = UriResolver
-                .operateOnPath("/todo-lists/{todo-list-id}")
-                .andResolveWithIds(command.getId().getRaw());
-
         todoListFacade.handle(command);
-
-        return ResponseEntity
-                .created(location)
-                .build();
     }
 
     @PostMapping("/{list-id}/items")
-    ResponseEntity<Void> createTodo(@PathVariable(value = "list-id") @NonNull String listId,
-                                    @RequestBody CreateTodoRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    void createTodo(@PathVariable(value = "list-id") @NonNull String listId,
+                    @RequestBody CreateTodoRequest request) {
         CreateTodoCommand command = new CreateTodoCommand(
                 new TodoListId(listId),
-                todoItemIdSupplier.get(),
+                new TodoItemId(request.getId()),
                 request.getDescription()
         );
 
-        URI location = UriResolver
-                .operateOnPath("/todo-lists/{todo-list-id}/items/{todo-item-id}")
-                .andResolveWithIds(
-                        command.getTodoListId().getRaw(),
-                        command.getTodoItemId().getRaw());
-
         todoListFacade.handle(command);
-
-        return ResponseEntity
-                .created(location)
-                .build();
     }
 
     @PutMapping("/{list-id}/items/{item-id}/complete")

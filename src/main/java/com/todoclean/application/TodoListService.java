@@ -12,7 +12,6 @@ import com.todoclean.domain.todolist.OnlyOneHourAfterRevertPolicy;
 import com.todoclean.domain.todolist.TodoItem;
 import com.todoclean.domain.todolist.TodoList;
 import com.todoclean.domain.todolist.TodoListId;
-
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
 
@@ -20,7 +19,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 class TodoListService {
+
     private final TodoListRepository todoListRepository;
+
     private final Supplier<LocalDateTime> currentTimeSupplier;
 
     void handle(CompleteTodoCommand command) {
@@ -50,11 +51,13 @@ class TodoListService {
     }
 
     void handle(CreateTodoListCommand command) {
+        // authorize
         TodoList todoList = TodoList.create(command.getId(), command.getTitle());
         todoListRepository.persist(todoList);
     }
 
     void handle(CreateTodoCommand command) {
+        // authorize
         TodoItem todoItem = new TodoItem(
                 command.getTodoItemId(),
                 command.getDescription(),
@@ -68,6 +71,7 @@ class TodoListService {
     }
 
     void handle(RemoveTodoItemCommand command) {
+        // authorize
         todoListRepository.update(
                 command.getTodoListId(),
                 todoList -> todoList.remove(command.getTodoItemId())
@@ -75,6 +79,7 @@ class TodoListService {
     }
 
     void handle(RemoveTodoListCommand command) {
+        // authorize
         todoListRepository.deleteById(command.getTodoListId());
     }
 }

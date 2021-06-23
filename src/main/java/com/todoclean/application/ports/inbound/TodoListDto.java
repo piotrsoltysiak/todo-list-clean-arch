@@ -21,7 +21,7 @@ public class TodoListDto {
 
     List<TodoItemDto> completedItems;
 
-    public static TodoListDto  from(TodoList todoList) {
+    public static TodoListDto from(TodoList todoList) {
         return new TodoListDto(
                 todoList.getId(),
                 todoList.getTitle(),

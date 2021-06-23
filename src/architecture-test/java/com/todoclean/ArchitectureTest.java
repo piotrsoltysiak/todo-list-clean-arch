@@ -6,38 +6,31 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
 @AnalyzeClasses(packages = "com.todoclean",
         importOptions = { ImportOption.DoNotIncludeTests.class })
 class ArchitectureTest {
 
-    private static final String DOMAIN_LAYER = "com.todoclean.domain..";
+    private static final String DOMAIN_LAYER = "Domain";
 
-    private static final String APPLICATION_LAYER = "com.todoclean.application..";
+    private static final String DOMAIN_LAYER_PACKAGE = "com.todoclean.domain..";
 
-    private static final String ADAPTERS_LAYER = "com.todoclean.adapters..";
+    private static final String APPLICATION_LAYER = "Application";
 
-    private static final String JDK = "java..";
+    private static final String APPLICATION_LAYER_PACKAGE = "com.todoclean.application..";
 
-    private static final String SPRING = "org.springframework..";
+    private static final String ADAPTERS_LAYER = "Adapters";
 
-    @ArchTest
-    static final ArchRule domain_layer_rule =
-            classes().that().resideInAPackage(DOMAIN_LAYER)
-                    .should().onlyAccessClassesThat().resideInAnyPackage(DOMAIN_LAYER, JDK)
-                    .because("Domain should only access itself and jdk");
+    private static final String ADAPTERS_LAYER_PACKAGE = "com.todoclean.adapters..";
 
     @ArchTest
-    static final ArchRule application_layer_rule =
-            classes().that().resideInAPackage(APPLICATION_LAYER)
-                    .should().onlyAccessClassesThat().resideInAnyPackage(DOMAIN_LAYER, APPLICATION_LAYER, JDK)
-                    .because("Application should only access itself, domain and jdk");
-
-    @ArchTest
-    static final ArchRule adapters_layer_rule =
-            classes().that().resideInAPackage(ADAPTERS_LAYER)
-                    .should().onlyAccessClassesThat().resideInAnyPackage(DOMAIN_LAYER, APPLICATION_LAYER, ADAPTERS_LAYER, JDK, SPRING)
-                    .because("Adapters should only access itself, application, domain, spring and jdk");
+    static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
+            .layer(DOMAIN_LAYER).definedBy(DOMAIN_LAYER_PACKAGE)
+            .layer(APPLICATION_LAYER).definedBy(APPLICATION_LAYER_PACKAGE)
+            .layer(ADAPTERS_LAYER).definedBy(ADAPTERS_LAYER_PACKAGE)
+            .whereLayer(ADAPTERS_LAYER).mayNotBeAccessedByAnyLayer()
+            .whereLayer(APPLICATION_LAYER).mayOnlyBeAccessedByLayers(ADAPTERS_LAYER)
+            .whereLayer(DOMAIN_LAYER).mayOnlyBeAccessedByLayers(ADAPTERS_LAYER, APPLICATION_LAYER);
 
 }

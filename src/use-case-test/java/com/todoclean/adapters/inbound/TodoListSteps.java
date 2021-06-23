@@ -11,8 +11,6 @@ import com.todoclean.domain.todolist.TodoItemId;
 import com.todoclean.domain.todolist.TodoListId;
 import io.cucumber.java8.En;
 
-import java.time.LocalDateTime;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

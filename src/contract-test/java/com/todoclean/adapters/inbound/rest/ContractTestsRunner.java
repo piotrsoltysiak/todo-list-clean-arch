@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -54,12 +53,6 @@ class ContractTestsRunner {
     @MockBean
     private TodoListFacade todoListFacade;
 
-    @MockBean
-    private Supplier<TodoListId> todoListIdSupplier;
-
-    @MockBean
-    private Supplier<TodoItemId> todoItemIdSupplier;
-
     @TestTemplate
     @ExtendWith(PactVerificationInvocationContextProvider.class)
     void pactVerification(PactVerificationContext context) {
@@ -69,11 +62,6 @@ class ContractTestsRunner {
     @BeforeEach
     void before(PactVerificationContext context) {
         context.setTarget(new MockMvcTestTarget(mockMvc));
-    }
-
-    @State(value = "Allowing to create todo list")
-    void successfulCreateTodoListSetup() {
-        when(todoListIdSupplier.get()).thenReturn(TODO_LIST_ID);
     }
 
     @State(value = "Allowing to create todo list", action = StateChangeAction.TEARDOWN)
@@ -88,11 +76,6 @@ class ContractTestsRunner {
         CompleteTodoCommand command = new CompleteTodoCommand(TODO_LIST_ID, TODO_ITEM_ID);
 
         verify(todoListFacade).handle(command);
-    }
-
-    @State(value = "Allowing to create todo item for given list id")
-    void successfulCreateTodoItemSetup() {
-        when(todoItemIdSupplier.get()).thenReturn(TODO_ITEM_ID);
     }
 
     @State(value = "Allowing to create todo item for given list id", action = StateChangeAction.TEARDOWN)

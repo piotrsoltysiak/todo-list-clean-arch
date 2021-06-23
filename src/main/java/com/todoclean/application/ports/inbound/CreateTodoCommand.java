@@ -8,7 +8,10 @@ import lombok.Value;
 
 @Value
 public class CreateTodoCommand {
+
     @NonNull TodoListId todoListId;
+
     @NonNull TodoItemId todoItemId;
+
     @NonNull String description;
 }
