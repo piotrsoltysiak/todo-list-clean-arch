@@ -11,8 +11,11 @@ import com.todoclean.application.ports.outbound.CurrentTimeSupplier;
 import com.todoclean.application.ports.outbound.TodoListRepository;
 import com.todoclean.domain.todolist.TodoListId;
 
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class TodoListFacade {
 
