@@ -1,0 +1,114 @@
+{
+  "consumer": {
+    "name": "TodoListWebApp"
+  },
+  "provider": {
+    "name": "TodoListBackend"
+  },
+  "interactions": [
+    {
+      "description": "A request to create todo list",
+      "providerState": "Allowing to create todo list",
+      "request": {
+        "method": "POST",
+        "path": "/todo-lists",
+        "body": {
+          "id":"test-todo-list-id",
+          "name": "Test todo list"
+        }
+      },
+      "response": {
+        "status": 201
+      }
+    },
+    {
+      "description": "A request to create todo item",
+      "providerState": "Allowing to create todo item for given list id",
+      "request": {
+        "method": "POST",
+        "path": "/todo-lists/test-todo-list-id/items",
+        "body": {
+          "id": "test-todo-item-id",
+          "description": "Test todo item"
+        }
+      },
+      "response": {
+        "status": 201
+      }
+    },
+    {
+      "description": "A request to complete the todo item",
+      "providerState": "Todo list with todo item which can be completed",
+      "request": {
+        "method": "PUT",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/complete"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "A request to revert the todo item completion",
+      "providerState": "Allowing to revert completion of todo item for given id and list id",
+      "request": {
+        "method": "PUT",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/revert-completion"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "A request to remove todo item",
+      "providerState": "Allowing to remove todo item for given id and list id",
+      "request": {
+        "method": "DELETE",
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id"
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "description": "A request to remove todo list",
+      "providerState": "Allowing to remove todo list for given id",
+      "request": {
+        "method": "DELETE",
+        "path": "/todo-lists/test-todo-list-id"
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "description": "A request to get todo list",
+      "providerState": "Allowing to get todo list for given id",
+      "request": {
+        "method": "GET",
+        "path": "/todo-lists/test-todo-list-id"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "id": "test-todo-list-id",
+          "title": "Test todo list",
+          "todoItems": [],
+          "completedItems": [
+            {
+              "id": "test-todo-item-id",
+              "whatNeedsToBeDone": "Clean architecture presentation"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
