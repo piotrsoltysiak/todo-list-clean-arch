@@ -57,13 +57,13 @@ public class TodoList {
                 .anyMatch(todoItemId::equals);
     }
 
-    public void revertCompletion(TodoItemId todoItemId, RevertPolicy revertPolicy) {
+    public void revertCompletion(TodoItemId todoItemId, CompletionRevertPolicy revertPolicy) {
         items.stream()
                 .filter(todoItem -> todoItem.hasId(todoItemId))
                 .forEach(todoItem -> todoItem.revertCompletion(revertPolicy));
     }
 
-    public List<TodoItem> getPendingItems() {
+    public List<TodoItem> getTodoItems() {
         return items.stream()
                 .filter(item -> !item.isCompleted())
                 .collect(Collectors.toList());

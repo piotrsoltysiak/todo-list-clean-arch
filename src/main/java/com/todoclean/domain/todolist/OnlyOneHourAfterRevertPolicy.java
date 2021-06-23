@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class OnlyOneHourAfterRevertPolicy implements RevertPolicy {
+public class OnlyOneHourAfterRevertPolicy implements CompletionRevertPolicy {
 
     private final LocalDateTime revertedAt;
 

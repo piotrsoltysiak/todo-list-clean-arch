@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TodoSteps implements En {
+public class TodoListSteps implements En {
 
-    public TodoSteps(TestTodoListFacade todoListFacade,
-                     ErrorHandler errorHandler) {
+    public TodoListSteps(TestTodoListFacade todoListFacade,
+                         ErrorHandler errorHandler) {
 
         Given("I created todo list {string}", (String todoListTitle) ->
                 errorHandler.executeWithExceptionHandling(() -> {
@@ -83,10 +83,6 @@ public class TodoSteps implements En {
 
                 todoListFacade.handle(command);
             });
-        });
-
-        And("One hour passes", () -> {
-            todoListFacade.setTime(LocalDateTime.now().plusHours(1));
         });
 
     }

@@ -30,6 +30,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,14 +69,6 @@ class ContractTestsRunner {
     @BeforeEach
     void before(PactVerificationContext context) {
         context.setTarget(new MockMvcTestTarget(mockMvc));
-
-    }
-
-    @State(value = "Todo list with todo item which can be completed", action = StateChangeAction.TEARDOWN)
-    void successfulCompleteTodoItemVerification() {
-        CompleteTodoCommand command = new CompleteTodoCommand(TODO_LIST_ID, TODO_ITEM_ID);
-
-        verify(todoListFacade).handle(command);
     }
 
     @State(value = "Allowing to create todo list")
@@ -86,6 +79,13 @@ class ContractTestsRunner {
     @State(value = "Allowing to create todo list", action = StateChangeAction.TEARDOWN)
     void successfulCreateTodoListVerification() {
         CreateTodoListCommand command = new CreateTodoListCommand(TODO_LIST_ID, "Test todo list");
+
+        verify(todoListFacade).handle(command);
+    }
+
+    @State(value = "Todo list with todo item which can be completed", action = StateChangeAction.TEARDOWN)
+    void successfulCompleteTodoItemVerification() {
+        CompleteTodoCommand command = new CompleteTodoCommand(TODO_LIST_ID, TODO_ITEM_ID);
 
         verify(todoListFacade).handle(command);
     }
@@ -125,18 +125,17 @@ class ContractTestsRunner {
 
     @State(value = "Allowing to get todo list for given id")
     void successfulGetTodoListByIdVerification() {
-        TodoItemDto completedItem = TodoItemDto.builder()
-                .id(TODO_ITEM_ID)
-                .whatNeedsToBeDone("Clean architecture presentation")
-                .build();
+        TodoItemDto completedItem = new TodoItemDto(
+                TODO_ITEM_ID,
+                "Clean architecture presentation");
 
         when(todoListFacade.findBy(TODO_LIST_ID)).thenReturn(
-                TodoListDto.builder()
-                        .todoListId(TODO_LIST_ID)
-                        .title("Test todo list")
-                        .completedItems(Collections.singletonList(completedItem))
-                        .build()
-        );
+                new TodoListDto(
+                        TODO_LIST_ID,
+                        "Test todo list",
+                        Collections.emptyList(),
+                        Collections.singletonList(completedItem)
+                ));
     }
 
 }

@@ -18,17 +18,14 @@ interface MongoTodoListRepository extends TodoListRepository, MongoRepository<To
 
     @Override
     default void update(TodoListId id, Consumer<TodoList> action) {
-        // begin transaction
         this.findById(id)
                 .ifPresentOrElse(
                         todoList -> {
                             action.accept(todoList);
                             persist(todoList);
-                            // commit transaction
                         },
                         () -> {
                             throw new TodoListNotFoundException(id);
-                            // abort transaction
                         }
                 );
     }

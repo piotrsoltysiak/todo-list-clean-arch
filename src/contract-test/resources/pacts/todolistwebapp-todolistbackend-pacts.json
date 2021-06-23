@@ -12,11 +12,9 @@
       "request": {
         "method": "POST",
         "path": "/todo-lists",
-        "headers": {},
         "body": {
           "name": "Test todo list"
-        },
-        "matchingRules": {}
+        }
       },
       "response": {
         "status": 201,
@@ -31,11 +29,9 @@
       "request": {
         "method": "POST",
         "path": "/todo-lists/test-todo-list-id/items",
-        "headers": {},
         "body": {
           "description": "Test todo item"
-        },
-        "matchingRules": {}
+        }
       },
       "response": {
         "status": 201,
@@ -49,29 +45,21 @@
       "providerState": "Todo list with todo item which can be completed",
       "request": {
         "method": "PUT",
-        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/complete",
-        "headers": {},
-        "body": {},
-        "matchingRules": {}
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/complete"
       },
       "response": {
-        "status": 200,
-        "headers": {}
+        "status": 200
       }
     },
     {
-      "description": "A request to complete the todo item",
+      "description": "A request to revert the todo item completion",
       "providerState": "Allowing to revert completion of todo item for given id and list id",
       "request": {
         "method": "PUT",
-        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/revert-completion",
-        "headers": {},
-        "body": {},
-        "matchingRules": {}
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id/revert-completion"
       },
       "response": {
-        "status": 200,
-        "headers": {}
+        "status": 200
       }
     },
     {
@@ -79,14 +67,10 @@
       "providerState": "Allowing to remove todo item for given id and list id",
       "request": {
         "method": "DELETE",
-        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id",
-        "headers": {},
-        "body": {},
-        "matchingRules": {}
+        "path": "/todo-lists/test-todo-list-id/items/test-todo-item-id"
       },
       "response": {
-        "status": 204,
-        "headers": {}
+        "status": 204
       }
     },
     {
@@ -94,14 +78,10 @@
       "providerState": "Allowing to remove todo list for given id",
       "request": {
         "method": "DELETE",
-        "path": "/todo-lists/test-todo-list-id",
-        "headers": {},
-        "body": {},
-        "matchingRules": {}
+        "path": "/todo-lists/test-todo-list-id"
       },
       "response": {
-        "status": 204,
-        "headers": {}
+        "status": 204
       }
     },
     {
@@ -109,14 +89,24 @@
       "providerState": "Allowing to get todo list for given id",
       "request": {
         "method": "GET",
-        "path": "/todo-lists/test-todo-list-id",
-        "headers": {},
-        "body": {},
-        "matchingRules": {}
+        "path": "/todo-lists/test-todo-list-id"
       },
       "response": {
         "status": 200,
-        "headers": {}
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "id": "test-todo-list-id",
+          "title": "Test todo list",
+          "todoItems": [],
+          "completedItems": [
+            {
+              "id": "test-todo-item-id",
+              "whatNeedsToBeDone": "Clean architecture presentation"
+            }
+          ]
+        }
       }
     }
   ],

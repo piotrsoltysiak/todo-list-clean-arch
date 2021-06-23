@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.function.Supplier;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -125,11 +126,12 @@ class TodoListController {
         todoListFacade.handle(command);
     }
 
-    @GetMapping("/{list-id}")
+    @GetMapping(value = "/{list-id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TodoListDto getTodoList(@PathVariable(value = "list-id") @NonNull String listId) {
+    GetTodoListResponse getTodoList(@PathVariable(value = "list-id") @NonNull String listId) {
         TodoListId todoListId = new TodoListId(listId);
-        return todoListFacade.findBy(todoListId);
+        TodoListDto dto = todoListFacade.findBy(todoListId);
+        return new GetTodoListResponse(dto);
     }
 
 }

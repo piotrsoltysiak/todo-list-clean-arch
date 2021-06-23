@@ -4,18 +4,18 @@ import java.net.URI;
 
 import org.springframework.web.util.UriComponentsBuilder;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 class UriResolver {
-    private String path;
+    private final String path;
 
-    private UriResolver(String path) {
-        this.path = path;
-    }
-
-    public static UriResolver operateOnPath(String path) {
+    static UriResolver operateOnPath(String path) {
         return new UriResolver(path);
     }
 
-    public URI andResolveWithIds(String... uriVariableValues) {
+    URI andResolveWithIds(String... uriVariableValues) {
         return UriComponentsBuilder.fromPath(path)
                 .buildAndExpand((Object[]) uriVariableValues)
                 .toUri();

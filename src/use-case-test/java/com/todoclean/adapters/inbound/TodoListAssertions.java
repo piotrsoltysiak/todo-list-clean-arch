@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 @RequiredArgsConstructor
-public class TodoAssertions implements En {
+public class TodoListAssertions implements En {
 
-    public TodoAssertions(TestTodoListFacade todoListFacade,
-                          ErrorHandler errorHandler) {
+    public TodoListAssertions(TestTodoListFacade todoListFacade,
+                              ErrorHandler errorHandler) {
 
         Then("The item {string} is on the completed section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
@@ -30,20 +30,20 @@ public class TodoAssertions implements En {
             assertThat(isPresentOnTheCompletedList).isTrue();
         });
 
-        Then("The item {string} is not on the pending section of list {string}", (String todoDescription, String todoListTitle) -> {
+        Then("The item {string} is not on the todo section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
             boolean isPresentOnThePendingList = todoListFacade.findBy(todoListId)
-                    .getPendingItems()
+                    .getTodoItems()
                     .stream()
                     .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
             assertThat(isPresentOnThePendingList).isFalse();
         });
 
-        Then("The todo list {string} has no pending items", (String todoListTitle) -> {
+        Then("The todo list {string} has no todo items", (String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             boolean isPendingListEmpty = todoListFacade.findBy(todoListId)
-                    .getPendingItems()
+                    .getTodoItems()
                     .isEmpty();
 
             assertThat(isPendingListEmpty);
@@ -58,11 +58,11 @@ public class TodoAssertions implements En {
             assertThat(isCompletedListEmpty);
         });
 
-        Then("The item {string} is on the pending section of list {string}", (String todoDescription, String todoListTitle) -> {
+        Then("The item {string} is on the todo section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
             boolean isPresentOnThePendingList = todoListFacade.findBy(todoListId)
-                    .getPendingItems()
+                    .getTodoItems()
                     .stream()
                     .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
 
@@ -108,8 +108,6 @@ public class TodoAssertions implements En {
 
         Then("Todo item not found error occurs", () -> errorHandler.assertThrown(TodoItemNotFoundException.class));
 
-        Then("Revert outdated error occurs", () -> errorHandler.assertThrown(IllegalStateException.class)
-                .hasMessageContaining("Unable to revert"));
     }
 
     private String toId(String todoListTitle) {

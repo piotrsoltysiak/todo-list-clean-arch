@@ -1,6 +1,6 @@
 package com.todoclean.domain.todolist;
 
-public interface RevertPolicy {
+public interface CompletionRevertPolicy {
 
     void assertRevertable(TodoItem todoItem);
 }

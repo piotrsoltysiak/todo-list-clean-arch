@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-class OnlyOneHourAfterRevertPolicyTest {
+class OnlyOneHourAfterCompletionRevertPolicyTest {
 
     @Test
     void should_pass_if_completed_less_than_one_hour_before_revert() {

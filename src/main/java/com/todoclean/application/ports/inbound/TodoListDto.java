@@ -6,26 +6,26 @@ import com.todoclean.domain.todolist.TodoListId;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
-@Builder
+@RequiredArgsConstructor
 public class TodoListDto {
 
-    TodoListId todoListId;
+    TodoListId id;
 
     String title;
 
-    List<TodoItemDto> pendingItems;
+    List<TodoItemDto> todoItems;
 
     List<TodoItemDto> completedItems;
 
-    public static TodoListDto from(TodoList todoList) {
+    public static TodoListDto  from(TodoList todoList) {
         return new TodoListDto(
                 todoList.getId(),
                 todoList.getTitle(),
-                toDtos(todoList.getPendingItems()),
+                toDtos(todoList.getTodoItems()),
                 toDtos(todoList.getCompletedItems())
         );
     }

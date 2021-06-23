@@ -38,7 +38,7 @@ public class TodoItem {
         return completedAt != null;
     }
 
-    void revertCompletion(RevertPolicy policy) {
+    void revertCompletion(CompletionRevertPolicy policy) {
         if (!isCompleted()) {
             return;
         }

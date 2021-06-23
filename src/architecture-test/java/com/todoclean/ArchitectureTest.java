@@ -8,15 +8,15 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-@AnalyzeClasses(packages = "com.piotrsoltysiak.todoclean",
+@AnalyzeClasses(packages = "com.todoclean",
         importOptions = { ImportOption.DoNotIncludeTests.class })
 class ArchitectureTest {
 
-    private static final String DOMAIN_LAYER = "..domain..";
+    private static final String DOMAIN_LAYER = "com.todoclean.domain..";
 
-    private static final String APPLICATION_LAYER = "..application..";
+    private static final String APPLICATION_LAYER = "com.todoclean.application..";
 
-    private static final String ADAPTERS_LAYER = "..adapters..";
+    private static final String ADAPTERS_LAYER = "com.todoclean.adapters..";
 
     private static final String JDK = "java..";
 
