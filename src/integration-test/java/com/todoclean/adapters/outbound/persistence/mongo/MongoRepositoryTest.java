@@ -12,11 +12,6 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 
-// no mocking == no spring context refresh == fast test
-// slice test == light-weight spring context == fast start
-// using real database (via test containers)  == reliance
-// container instance shared across all tests
-
 @Testcontainers
 @DataMongoTest
 @ContextConfiguration(classes = { TodoSpringApplication.class, MongoConfig.class })

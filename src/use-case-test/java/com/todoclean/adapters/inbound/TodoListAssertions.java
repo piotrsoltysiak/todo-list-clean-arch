@@ -1,7 +1,6 @@
 package com.todoclean.adapters.inbound;
 
 import com.todoclean.application.TestTodoListFacade;
-import com.todoclean.application.ports.inbound.CompleteTodoCommand;
 import com.todoclean.application.ports.outbound.TodoListNotFoundException;
 import com.todoclean.domain.todolist.TodoItemId;
 import com.todoclean.domain.todolist.TodoItemNotFoundException;
@@ -19,24 +18,17 @@ public class TodoListAssertions implements En {
 
     public TodoListAssertions(TestTodoListFacade todoListFacade,
                               ErrorHandler errorHandler) {
-
         Then("The item {string} is on the completed section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
-            boolean isPresentOnTheCompletedList = todoListFacade.findBy(todoListId)
-                    .getCompletedItems()
-                    .stream()
-                    .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId) && todoItemDto.getWhatNeedsToBeDone().equals(todoDescription));
+            boolean isPresentOnTheCompletedList = isPresentOnTheCompletedList(todoListFacade, todoListId, todoItemId);
             assertThat(isPresentOnTheCompletedList).isTrue();
         });
 
         Then("The item {string} is not on the todo section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
-            boolean isPresentOnThePendingList = todoListFacade.findBy(todoListId)
-                    .getTodoItems()
-                    .stream()
-                    .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
+            boolean isPresentOnThePendingList = isPresentOnThePendingList(todoListFacade, todoListId, todoItemId);
             assertThat(isPresentOnThePendingList).isFalse();
         });
 
@@ -61,21 +53,15 @@ public class TodoListAssertions implements En {
         Then("The item {string} is on the todo section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
-            boolean isPresentOnThePendingList = todoListFacade.findBy(todoListId)
-                    .getTodoItems()
-                    .stream()
-                    .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
+            boolean isPresentOnThePendingList = isPresentOnThePendingList(todoListFacade, todoListId, todoItemId);
 
             assertThat(isPresentOnThePendingList).isTrue();
         });
 
-        And("The item {string} is not on the completed section of list {string}", (String todoDescription, String todoListTitle) -> {
+        Then("The item {string} is not on the completed section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
-            boolean isPresentOnTheCompletedList = todoListFacade.findBy(todoListId)
-                    .getCompletedItems()
-                    .stream()
-                    .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId) && todoItemDto.getWhatNeedsToBeDone().equals(todoDescription));
+            boolean isPresentOnTheCompletedList = isPresentOnTheCompletedList(todoListFacade, todoListId, todoItemId);
 
             assertThat(isPresentOnTheCompletedList).isFalse();
         });
@@ -89,25 +75,22 @@ public class TodoListAssertions implements En {
                     .hasMessageContaining(todoListIdRaw);
         });
 
-        When("I am unable to complete the item {string} from list {string} with not found error", (String todoDescription, String todoListTitle) -> {
-            String todoItemIdRaw = toId(todoDescription);
-            String todoListIdRaw = toId(todoListTitle);
-            TodoListId todoListId = new TodoListId(todoListIdRaw);
-            TodoItemId todoItemId = new TodoItemId(todoItemIdRaw);
-
-            CompleteTodoCommand command = new CompleteTodoCommand(todoListId, todoItemId);
-
-            Throwable throwable = catchThrowable(() -> todoListFacade.handle(command));
-
-            assertThat(throwable)
-                    .isInstanceOf(TodoItemNotFoundException.class)
-                    .hasMessageContaining(todoItemIdRaw)
-                    .hasMessageContaining(todoListIdRaw)
-                    .hasMessageContaining("not found");
-        });
-
         Then("Todo item not found error occurs", () -> errorHandler.assertThrown(TodoItemNotFoundException.class));
 
+    }
+
+    private boolean isPresentOnTheCompletedList(TestTodoListFacade todoListFacade, TodoListId todoListId, TodoItemId todoItemId) {
+        return todoListFacade.findBy(todoListId)
+                .getCompletedItems()
+                .stream()
+                .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
+    }
+
+    private boolean isPresentOnThePendingList(TestTodoListFacade todoListFacade, TodoListId todoListId, TodoItemId todoItemId) {
+        return todoListFacade.findBy(todoListId)
+                .getTodoItems()
+                .stream()
+                .anyMatch(todoItemDto -> todoItemDto.getId().equals(todoItemId));
     }
 
     private String toId(String todoListTitle) {
