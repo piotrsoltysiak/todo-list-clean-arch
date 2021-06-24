@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NoArgsConstructor
-public class ErrorHandler {
+public class TestErrorHandler {
 
     Exception thrown;
 
@@ -17,11 +17,15 @@ public class ErrorHandler {
                 .isInstanceOf(type);
     }
 
-    public void executeWithExceptionHandling(Runnable action) {
+    void executeWithExceptionHandling(Runnable action) {
         try {
             action.run();
         } catch (Exception e) {
-            thrown = e;
+            if (thrown == null) {
+                thrown = e;
+            } else {
+                throw new IllegalStateException("Multiple exceptions thrown during scenario!", e);
+            }
         }
     }
 }

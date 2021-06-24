@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 public class TodoListAssertions implements En {
 
     public TodoListAssertions(TestTodoListFacade todoListFacade,
-                              ErrorHandler errorHandler) {
+                              TestErrorHandler errorHandler) {
         Then("The item {string} is on the completed section of list {string}", (String todoDescription, String todoListTitle) -> {
             TodoListId todoListId = new TodoListId(toId(todoListTitle));
             TodoItemId todoItemId = new TodoItemId(toId(todoDescription));
