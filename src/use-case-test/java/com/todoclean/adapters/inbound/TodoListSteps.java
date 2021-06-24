@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class TodoListSteps implements En {
 
     public TodoListSteps(TestTodoListFacade todoListFacade,
-                         ErrorHandler errorHandler) {
+                         TestErrorHandler errorHandler) {
 
         Given("I created todo list {string}", (String todoListTitle) ->
                 errorHandler.executeWithExceptionHandling(() -> {
