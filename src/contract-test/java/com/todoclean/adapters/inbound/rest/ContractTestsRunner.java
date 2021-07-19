@@ -43,6 +43,7 @@ import static org.mockito.Mockito.when;
 )
 class ContractTestsRunner {
 
+
     private static final TodoListId TODO_LIST_ID = new TodoListId("test-todo-list-id");
 
     private static final TodoItemId TODO_ITEM_ID = new TodoItemId("test-todo-item-id");

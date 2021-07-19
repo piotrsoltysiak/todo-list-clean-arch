@@ -13,7 +13,6 @@ import io.cucumber.java8.En;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class TodoListSteps implements En {
 
     public TodoListSteps(TestTodoListFacade todoListFacade,
