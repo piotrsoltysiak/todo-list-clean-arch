@@ -222,9 +222,13 @@ It seems a little complicated, but its worth it. With this little effort we get:
 
 We should take care of high coverege here, preferably 100% known use cases (and adding new one every time corner case appears).
 
+
+
 #### Adapters
 
 The dependency rule makes the application not depend on the adapters layer. Thanks to that, we can test the adapters in isolation.
+
+
 
 ##### Inbound
 
@@ -319,9 +323,9 @@ Both tools are used in the example code:
     }
     ```
 
-In case when we are unable to maintain contract tests using dedicated framework, we should follow the same test flow, and only replace test framework with custom one able to produce the same signal as expected on production. 
+In case when we are unable to maintain contract tests using dedicated framework, we should follow the same test flow, and only replace test framework with custom one able, to produce the same signal as expected on production. 
 
-Thanks to testing the inbound adapters in isolation and mocking single bean (application facade) the execution time of those tests should
+Thanks to testing the inbound adapters in isolation and mocking single bean (application facade) the exeuction time should be close to the spring-slice-context bootstrap time (approx. few seconds).
 
 ​                                                                                                                  
 
@@ -338,8 +342,6 @@ There are tools which help us to minimise the implementation cost:
 * [test containers](https://www.testcontainers.org/)  "providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container"
 
 To minimise tests execution time, we can create abstract, base class - both spring context and test container would be bootstraped only once, no matter how many test classes would inherit from it. 
-
-The only catch here is not to mock any beans (it shouldn't be needed if the architecture is properly implemented) - such mock would cause spring context refresh.
 
 ```java
 @Testcontainers
@@ -382,3 +384,39 @@ public class MongoTodoListRepositoryTest extends MongoRepositoryTest {
 
 
 
+#### Infrastructure
+
+To properly test the infrastructure layer we should go with e2e tests, which are not covered in this repository.
+
+
+
+#### Architecture
+
+To ensure that all architecture rules are respected we can use [ArchUnit](https://www.archunit.org/):
+
+```java
+    @ArchTest
+    static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
+            .layer(DOMAIN_LAYER).definedBy(DOMAIN_LAYER_PACKAGE)
+            .layer(APPLICATION_LAYER).definedBy(APPLICATION_LAYER_PACKAGE)
+            .layer(ADAPTERS_LAYER).definedBy(ADAPTERS_LAYER_PACKAGE)
+            .whereLayer(ADAPTERS_LAYER).mayNotBeAccessedByAnyLayer()
+            .whereLayer(APPLICATION_LAYER).mayOnlyBeAccessedByLayers(ADAPTERS_LAYER)
+            .whereLayer(DOMAIN_LAYER).mayOnlyBeAccessedByLayers(ADAPTERS_LAYER, APPLICATION_LAYER);
+```
+
+
+
+### Project structure
+
+Project structure slightly differes from the architecture. The main difference is in adapters tests - instead of grouping them by their purpose (inbound/outbound), I've decided to separate the contract tests from other integration tests, due to different technologies used (pact vs test containers).
+
+```bash
+├── src
+│   ├── architecture-test
+│   ├── contract-test
+│   ├── integration-test
+│   ├── main
+│   ├── test
+│   └── use-case-test
+```
