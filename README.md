@@ -4,65 +4,73 @@
 
 ### Architecture overview
 
+The single, most important principle of clean architecture is [the dependency rule](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html):
+
+
+ >Source code dependencies can only point inwards. Nothing in an inner circle can know anything at all about something in an outer circle. In particular, the name of something declared in an outer circle must not be mentioned by the code in the inner circle. That includes functions, classes. variables, or any other named software entity.
 
 ![Architecture overview](docs/images/overview.png)
 
-The single, most important rule of the clean architecture is [the dependency rule](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html):
+It's easy to memorize the rule if we think about the architectural model as build not with circles, but as a tower of pucks. You should be able to use elements from higher "puck" any other tower without changing the puck. 
+
+Translating it into code - you should be able to reuse domain objects in any use case without changing its code and it should give the same effect. You should be able to trigger the use case from multiple inputs (inbound adapters) and get the same results. And so on.
+
+The number of circles may vary, depending on the needs.
+
+In this project I've decided to go with the most common approach, consisting of four circles. Starting from the higher, most inner one:
 
 
- >Source code dependencies can only point inwards. Nothing in an inner circle can know anything at all about something in an outer circle. In particular, the name of something declared in an outer circle must not be mentioned by the code in the an inner circle. That includes, functions, classes. variables, or any other named software entity.
-
-In proposed approach, there are four circles. Starting from the higher, most inner one:
 
 #### Domain
 
 The domain layer encapsulates the business logic, rules and processes. 
 
-This is the place where all the tactical DDD building blocks belongs, such as:
+It's a place where all the tactical DDD building blocks belongs, such as:
 
-* Aggregates
-* Entities
-* Value objects
-* Policies
-* Domain services
-* Domain events
-* Factories
+- Aggregates
+- Entities
+- Value objects
+- Policies
+- Domain services
+- Domain events
+- Factories
 
-Code in this layer should be technology independent, most preferably written with plain java (or any other language) code. However, the most pragmatic approach is to combine the domain objects with ORM annotations. 
+Code in this layer should be technology independent, preferably written with plain Java (or any other language) code. However, the most pragmatic approach is to combine the domain objects with ORM annotations (if you are using an SQL database).
+
 
 
 #### Application
 
-Application layer encapsulates the use cases, by orchestrating domain layer and exposing it using well-defined API. It also defines the authorization rules for executing use cases.
+The application layer encapsulates the use cases, by orchestrating the domain layer and exposing it using a well-defined API. It also defines the authorization rules for executing use cases.
 
-Application layer, combined with domain is often reffered as **application core**. The only things application core exposes publicily are ports, which allows to expose two types of aplication features:
+The application layer, combined with the domain is often referred to as **the application core**. The only things application core exposes publicly are ports, which allows exposing two types of application features:
 
-* capabilities - all use cases possible to execute, exposed by **inbound ports** (e.g - `CreateTodoList`) - marked as red circles on figure below
-* needs - everything needed by application to execute use cases, exposed by **outbound ports** (e.g - `LoadTodoListById`) - marked as grey circles on figure below
+* capabilities - all use cases possible to execute, exposed by **inbound ports** (e.g - CreateTodoList) - marked as red circles on the figure below. The inbound ports are mostly **Commands**, used for changing the application state, and **Queries**, allowing to get the current state. It's a good practice to not combine those two (be [CQS](https://martinfowler.com/bliki/CommandQuerySeparation.html)-compliant).
+* needs - everything needed by the application to execute use cases, exposed by **outbound ports** (e.g - LoadTodoListById) - marked as grey circles on the figure below
 
 ![Ports](docs/images/ports.png)
 
-Ports can be implemented as well-separated interfaces, build around single capability (use case) or single need. The other approach, which I personally find simpler and more practical is to build a facade around the application, exposing the inbound ports by its public methods. To construct such facade, you need to provide implementation of all outbound adapters, which makes it single object you need to create to be able to run the application code. 
+Ports can be implemented as well-separated interfaces, build around a single use case or single need. 
 
-This example project is exposing the ports using facade:
+The other approach, which I find simpler and more practical is to build a facade around the application, exposing the inbound ports by its public methods. To construct such a facade, you need to provide the implementation of all outbound adapters, which makes it a single object you need to create to be able to run the application code and make it hard to create the application in the invalid state.
+
+In this project the ports are exposed using facade:
 
 
 ![Facade](docs/images/facade.png)
 
 
 
-
-
-
 #### Adapters
 
-Adapters layer encapsulates the logic needed to adapt certain infrastructure to application ports. This layer contains code responsible for two things:
-* exposing capabilities to the external world - through REST, SOAP, CLI and other interfaces adapters, called **inbound adapters**
-* providing tools needed by application - by implementing **outbound adapters** to infrastrucutre
+The adapters layer encapsulates the logic needed to adapt certain infrastructure to application ports. This layer contains code responsible for two things:
 
-In this project the only inbound adapter needed is the single REST controller - `TodoListController`. Application needs access to clock and persistence, so we have two outbound porst - `MongoTodoListRepository` and anonymous class providing time usingx§ `LocalDateTime::now`.
+- exposing capabilities to the external world - through REST, SOAP, CLI and other interfaces adapters, called **inbound adapters**
+- providing tools needed by application - by implementing **outbound adapters** to infrastructure
 
-Thanks to the dependency rule, we can replace any adapter, or add another one with no need to make any change in  the application core. It might get a little more complicated if we decide to combine ORM entities with domain entities (and then change from SQL database to NoSQL database).
+In this project, the only inbound adapter needed is the single REST controller - `TodoListController`. The application needs access to clock and persistence, so we have two outbound ports - `MongoTodoListRepository` and anonymous class providing time using method reference `LocalDateTime::now`.
+
+Thanks to the dependency rule, we can replace any adapter, or add another one with no need to make any change in the application core. It might get a little more complicated if we decide to combine ORM entities with domain entities (and then change from SQL database to NoSQL database).
 
 
 ![Adapters](docs/images/adapters.png)
@@ -111,9 +119,9 @@ class TodoItemTest {
 
 #### Application
 
-When it comes to testing use cases, we should interact with application core in the same way the client does. 
+When it comes to testing use cases, we should interact with the application core in the same way the client does. 
 
-First, we should focus on what the application should do, not how its implemented. To separate the "what" from "how", we can prepare human-readable test scenarios with [Gherkin](https://cucumber.io/docs/gherkin/), and make it executable with [Cucumber](https://cucumber.io/):
+First, we should focus on what the application should do, not how its implemented. To separate the "what" from "how", we can prepare human-readable test scenarios with [Gherkin](https://cucumber.io/docs/gherkin/), and make them executable with [Cucumber](https://cucumber.io/):
 
 ```gherkin
 Feature: Complete Todo Item
@@ -142,7 +150,7 @@ We should treat the Cucumber [steps definitions](https://cucumber.io/docs/cucumb
         });
 ```
 
-To make test application work, we need to provide the outbound adapters. The easiest way is to simply write them all by yourself as simple in-memory implementations:
+To make the test application work, we need to provide the outbound adapters. The easiest way is to simply write them all by yourself as simple in-memory implementations:
 
 ```java
 public class InMemoryTodoListRepository implements TodoListRepository {
@@ -187,9 +195,9 @@ public class TestTodoListFacade extends TodoListFacade {
 }
 ```
 
-By extending the application facade we can ensure that the same code would work on local test environment and production.
+By extending the application facade we can ensure that the same code would work on local test environments and production.
 
-To finish the puzzle, we use lightweight application container - [Pico](http://picocontainer.com/) to take care of creating new instance of application for every scenario (no additional code needed) and inject it to Cucumber steps:
+To finish the puzzle, we use a lightweight application container - [Pico](http://picocontainer.com/) to take care of creating a new instance of the application for every scenario (no additional code needed) and inject it to Cucumber steps:
 
 ```java
 public class TodoListSteps implements En {
@@ -210,17 +218,17 @@ public class TodoListSteps implements En {
 }
 ```
 
-The only thing required by Pico to automatically create instance of component is is no-args constructor, otherwise additional configuration code is needed. Every scenario runs on brand new application and infrastructure. 
+The only thing required by Pico to automatically create an instance of the component is a no-args constructor, otherwise, additional configuration code is needed. Every scenario runs on a brand new application and infrastructure. 
 
-It seems a little complicated, but its worth it. With this little effort we get:
+It seems a little complicated, but it's worth it. With this little effort we get:
 
 - Human-readable specification, well separated from implementation
 - Non-fragile tests, nearly as fast as unit tests (hundreds per second)
-- Ability to refactor without effort and loosing focus
-- BDD framework allowing to focus on scenarios instead of implementation
+- Ability to refactor without effort and losing focus
+- BDD framework allowing to focus on what the application should do, instead of how it does it
 - Full flexibility on setting up the test environment behaviour.
 
-We should take care of high coverege here, preferably 100% known use cases (and adding new one every time corner case appears).
+We should take care of high coverage here, preferably 100% known use cases (and adding a new one every time corner case appears).
 
 
 
@@ -232,13 +240,14 @@ The dependency rule makes the application not depend on the adapters layer. Than
 
 ##### Inbound
 
-The purpose of the inbound adapter is to receive some kind of signal from the infrastructure and adapt it to port exposed by the application (e.g receive HTTP request from REST API and adapt it to facade method call).
+The purpose of the inbound adapter is to receive some kind of signal from the infrastructure and adapt it to the port exposed by the application (e.g receive HTTP request from REST API and adapt it to facade method call).
 
-What we want to test (and specify) here if the signal is being properly adapted. Such test should take care about contract consistency, so the clients won't get any unexpected changes. I believe the right approach is to execute the same signal being executed on production and verify if the right port has been called (with expected arguments). Thanks to complying with the dependency rule, we can stub whole application without any risk. Furthermore, there is no need to test all the use cases - they are tested on application layer level.
+What we want to test (and specify) here is if the signal is being properly adapted. Such tests should take care of contract consistency, so the clients won't get any unexpected changes. I believe the right approach is to execute the same signal being executed on production and verify if the right port has been called (with expected arguments). Thanks to complying with the dependency rule, we can stub the whole application without any risk. Furthermore, there is no need to test all the use cases - they are tested on the application layer level.
 
-There are tools which help us to minimise the implementation cost:
-* spring slice tests - allowing to run spring with limited context (e.g [only the web layer](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-testing.html#boot-features-testing-spring-boot-applications-testing-autoconfigured-mvc-tests)), significantly reducing execution time 
-* contract testing framework - responsible for triggering the signal, allowing to define contracts apart from the test code, e.g [pact](https://docs.pact.io/)     
+Some tools help us to minimise the implementation cost:
+
+- spring slice tests - allowing to run spring with limited context (e.g [only the web layer](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-testing.html#boot-features-testing-spring-boot-applications-testing-autoconfigured-mvc-tests)), significantly reducing execution time 
+- contract testing framework - responsible for triggering the signal, allowing to define contracts apart from the test code, e.g [pact](https://docs.pact.io/) 
 
 ![Inbound adapters test](docs/images/inbound-adapters-test.png)
 
@@ -323,25 +332,28 @@ Both tools are used in the example code:
     }
     ```
 
-In case when we are unable to maintain contract tests using dedicated framework, we should follow the same test flow, and only replace test framework with custom one able, to produce the same signal as expected on production. 
+In case when we are unable to maintain contract tests using a dedicated framework, we should follow the same test flow, and only replace the test framework with a custom one, able to produce the same signal as expected on production. E.g if the application would expose CLI, I'd suggest writing tests that verify whether the commands provided by `stdin` result in triggering expected methods on the application facade. 
 
-Thanks to testing the inbound adapters in isolation and mocking single bean (application facade) the exeuction time should be close to the spring-slice-context bootstrap time (approx. few seconds).
+Thanks to testing the inbound adapters in isolation and mocking a single bean (application facade) the execution time should be close to the spring-slice-context bootstrap time (approx. few seconds).
 
 ​                                                                                                                  
 
 ##### Outbound   
 
-Outbound adapters receives signal from application core, and adapts it to the infrastructure capable of handling such signal.
-As in the inbound ports, what we want to test (and specify) here if the signal is being properly adapted. It's even simpler then in the inbound adapters - there is no mocking needed at all, we can test it in complete isolation.
+Outbound adapters receive a signal from the application core and adapt them to the infrastructure capable of handling such signals properly.  As in the inbound ports, what we want to test (and specify) here is if the signal is being properly adapted. However in this case the signal comes from the application core, and we should verify whether it results in a specific outcome in infrastructure.
+
+The nice feature of testing outbound adapters is that they are completely independent of the application core, so there is no mocking needed at all. We can simply take the adapter and test it in full isolation (but integrated with the infrastructure).
 
 ![Outboubd adapters test](docs/images/outbound-adapters-test.png)
 
+**It's important to test the outbound adapters using infrastructure as similar to the production environment as possible.** If we use `PostgreSQL` on prod and `H2` for tests - we can get completely different results for both cases, which makes the test unreliable.
 
-There are tools which help us to minimise the implementation cost:
-* spring slice tests - allowing to run spring with limited context (e.g [only the mongoDB-related beans](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-testing.html#boot-features-testing-spring-boot-applications-testing-autoconfigured-mongo-test)), significantly reducing execution time 
-* [test containers](https://www.testcontainers.org/)  "providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container"
+As for the inbound ports, there are also tools that helps to minimise the implementation cost:
 
-To minimise tests execution time, we can create abstract, base class - both spring context and test container would be bootstraped only once, no matter how many test classes would inherit from it. 
+- spring slice tests - allowing to run spring with limited context (e.g [only the MongoDB-related beans](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/boot-features-testing.html#boot-features-testing-spring-boot-applications-testing-autoconfigured-mongo-test)), significantly reducing execution time 
+- [test containers](https://www.testcontainers.org/), "providing lightweight, throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container" - which helps us to perform using the real-life infrastructure.
+
+To minimise tests execution time, we can create an abstract, base class - both spring context and test container would be bootstrapped only once, no matter how many test classes would inherit from it. 
 
 ```java
 @Testcontainers
@@ -357,7 +369,12 @@ public abstract class MongoRepositoryTest {
 }
 ```
 
-In those tests we should focus on veryfing if adapter works properly, not on a business logic:
+In those tests, we should focus on verifying if the adapter works properly, not on business logic. For example:
+
+- in persistence adapter we want to make sure if our code can save the entity, and find it using some custom query;
+- in the messaging adapter we want to test if the correct message was sent, and one way to do it is to receive it and check if this is what we expected;
+
+In this project we have a single mongo adapter (MongoTodoListRepository), with a simple test verifying whether we can persist and load the entity:
 
 ```java
 public class MongoTodoListRepositoryTest extends MongoRepositoryTest {
@@ -409,7 +426,7 @@ To ensure that all architecture rules are respected we can use [ArchUnit](https:
 
 ### Project structure
 
-Project structure slightly differes from the architecture. The main difference is in adapters tests - instead of grouping them by their purpose (inbound/outbound), I've decided to separate the contract tests from other integration tests, due to different technologies used (pact vs test containers).
+Project structure slightly differes from the architecture. The main difference is in adapters tests - instead of grouping them by their purpose (inbound/outbound), I've decided to separate the contract tests from other integration tests, due to different technologies used (`pact` vs `test-containers`).
 
 ```bash
 ├── src
